@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --forest: #1a3a2a;
+  --leaf: #2d6a4f;
+  --lime: #74c69d;
+  --glow: #b7e4c7;
+  --cream: #f8f4ef;
+  --dark: #0d1f17;
+  --text: #1b2e22;
+  --muted: #5a7a68;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-fade-up { animation: fadeUp 0.5s ease forwards; }
+
+/* ── Layout ── */
+.page-main {
+  padding-top: 64px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+/* Footer hidden on mobile */
+.desktop-footer {
+  display: block;
+}
+
+/* ── Page body — inner scroll container used by all pages ── */
+.page-body {
+  /* no extra styles needed on desktop */
+}
+
+/* ── Bottom Nav (mobile only) ── */
+.bottom-nav {
+  display: none; /* shown only on mobile via media query */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: rgba(248, 244, 239, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(45, 106, 79, 0.12);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bottom-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 4px;
+  text-decoration: none;
+  color: #5a7a68;
+  font-size: 0.6rem;
+  font-weight: 500;
+  transition: color 0.2s;
+  min-width: 0;
+}
+
+.bottom-nav__item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.bottom-nav__item--active {
+  color: #1a3a2a;
+}
+
+.bottom-nav__item--active svg {
+  color: #2d6a4f;
+}
+
+/* ── Hero ── */
+.hero-section {
+  min-height: calc(100vh - 64px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+  padding: 4rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.mini-cards {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-60%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* ── Features ── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(116, 198, 157, 0.15);
+  border-radius: 20px;
+  padding: 2rem;
+  text-decoration: none;
+  display: block;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.feature-card--wide {
+  grid-column: span 2;
+}
+
+/* ── Infografik pie grid ── */
+.pie-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* ── Calculator progress ── */
+.calc-progress-mobile {
+  display: none;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  /* Layout */
+  .page-main {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .navbar-links {
+    display: none;
+  }
+
+  .desktop-footer {
+    display: none;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex;
+  }
+
+  /* Hero */
+  .hero-section {
+    grid-template-columns: 1fr;
+    padding: 2rem 1.25rem;
+    gap: 2rem;
+    min-height: unset;
+  }
+
+  .hero-visual {
+    justify-content: flex-start;
+  }
+
+  .mini-cards {
+    display: none;
+  }
+
+  /* Features */
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card--wide {
+    grid-column: span 1;
+  }
+
+  /* Infografik */
+  .pie-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Calculator progress */
+  .calc-progress-desktop {
+    display: none;
+  }
+
+  .calc-progress-mobile {
+    display: block;
+  }
+}
