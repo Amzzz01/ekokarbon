@@ -2,6 +2,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import BottomNav from '@/components/BottomNav';
 import Footer from '@/components/Footer';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
   title: 'EkoKarbon — Jejak Karbon Kita',
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
         </div>
         {/* Bottom nav — mobile only */}
         <BottomNav />
+        <Analytics />
       </body>
     </html>
   );
