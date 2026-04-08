@@ -172,6 +172,15 @@ body {
   display: none;
 }
 
+/* ── Admin auth layout toggle ── */
+.admin-mobile { display: block; }
+.admin-desktop { display: none; }
+
+@media (min-width: 768px) {
+  .admin-mobile { display: none; }
+  .admin-desktop { display: flex; }
+}
+
 /* ── Mobile ── */
 @media (max-width: 768px) {
   /* Layout */
