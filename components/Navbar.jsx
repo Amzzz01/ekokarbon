@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf } from 'lucide-react';
+import { Leaf, ShieldCheck } from 'lucide-react';
 
 const links = [
   { href: '/', label: 'Utama' },
@@ -32,22 +32,39 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop links only — hidden on mobile (bottom nav handles it) */}
-        <div className="navbar-links">
-          {links.map(l => (
-            <Link key={l.href} href={l.href} style={{
-              padding: '0.4rem 0.9rem',
-              borderRadius: '2rem',
-              textDecoration: 'none',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              color: path === l.href ? '#1a3a2a' : '#5a7a68',
-              background: path === l.href ? 'rgba(116,198,157,0.2)' : 'transparent',
-              transition: 'all 0.2s',
-            }}>
-              {l.label}
-            </Link>
-          ))}
+        {/* Desktop links + admin icon */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="navbar-links">
+            {links.map(l => (
+              <Link key={l.href} href={l.href} style={{
+                padding: '0.4rem 0.9rem',
+                borderRadius: '2rem',
+                textDecoration: 'none',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: path === l.href ? '#1a3a2a' : '#5a7a68',
+                background: path === l.href ? 'rgba(116,198,157,0.2)' : 'transparent',
+                transition: 'all 0.2s',
+              }}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Admin icon — visible on all screen sizes */}
+          <Link href="/admin/login" title="Admin Panel" style={{
+            width: 36, height: 36,
+            borderRadius: '50%',
+            background: '#1a3a2a',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
+            transition: 'opacity 0.2s',
+          }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+          >
+            <ShieldCheck size={17} color="#74c69d" />
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calculator, Lightbulb, HelpCircle, BarChart2, Sprout } from 'lucide-react';
+import { Home, Calculator, Lightbulb, HelpCircle, BarChart2, Sprout, ShieldCheck } from 'lucide-react';
 
 const navItems = [
   { href: '/',            label: 'Utama',     Icon: Home },
@@ -10,6 +10,7 @@ const navItems = [
   { href: '/quiz',        label: 'Quiz',       Icon: HelpCircle },
   { href: '/infografik',  label: 'Grafik',     Icon: BarChart2 },
   { href: '/agriculture', label: 'Tani',       Icon: Sprout },
+  { href: '/admin/login', label: 'Admin',      Icon: ShieldCheck },
 ];
 
 export default function BottomNav() {
