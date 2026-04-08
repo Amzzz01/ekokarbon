@@ -5,85 +5,149 @@ import { getInfografik } from '@/lib/adminData';
 
 function InfografikCarousel({ items }) {
   const [index, setIndex] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
   const item = items[index];
   const total = items.length;
 
-  function prev() { setIndex((i) => (i - 1 + total) % total); }
-  function next() { setIndex((i) => (i + 1) % total); }
+  function prev(e) { e?.stopPropagation(); setIndex((i) => (i - 1 + total) % total); }
+  function next(e) { e?.stopPropagation(); setIndex((i) => (i + 1) % total); }
 
   return (
-    <div style={{ background: 'white', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(116,198,157,0.15)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
-      {/* Image area */}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f7f4' }}>
-        {item.imageUrl ? (
+    <>
+      {/* Lightbox — fullscreen on mobile tap */}
+      {lightbox && item.imageUrl && (
+        <div
+          onClick={() => setLightbox(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: 'rgba(0,0,0,0.92)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1rem',
+          }}
+        >
           <img
             src={item.imageUrl}
             alt={item.title}
-            style={{ maxWidth: '100%', maxHeight: 'min(480px, 60vw)', width: 'auto', height: 'auto', display: 'block', margin: '0 auto' }}
+            style={{ maxWidth: '100%', maxHeight: '90vh', width: 'auto', height: 'auto', borderRadius: 8, display: 'block' }}
           />
-        ) : (
-          <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🖼</div>
-        )}
-
-        {/* Prev button */}
-        {total > 1 && (
-          <button onClick={prev} style={{
-            position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
-            background: 'rgba(26,58,42,0.75)', border: 'none', borderRadius: '50%',
-            width: 44, height: 44, color: '#74c69d', fontSize: 20,
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
-          }}>‹</button>
-        )}
-
-        {/* Next button */}
-        {total > 1 && (
-          <button onClick={next} style={{
-            position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-            background: 'rgba(26,58,42,0.75)', border: 'none', borderRadius: '50%',
-            width: 44, height: 44, color: '#74c69d', fontSize: 20,
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
-          }}>›</button>
-        )}
-      </div>
-
-      {/* Info + dots */}
-      <div style={{ padding: '1rem 1.4rem 1.2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
-          <div>
-            {item.category && (
-              <span style={{ fontSize: 11, fontWeight: 600, color: '#74c69d', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{item.category}</span>
-            )}
-            <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', fontSize: '1rem', margin: '0.3rem 0 0.3rem' }}>{item.title}</h3>
-            {item.description && (
-              <p style={{ fontSize: '0.83rem', color: '#5a7a68', lineHeight: 1.65, margin: 0 }}>{item.description}</p>
-            )}
-          </div>
-          {/* Slide counter */}
+          <button
+            onClick={() => setLightbox(false)}
+            style={{
+              position: 'absolute', top: 16, right: 16,
+              background: 'rgba(255,255,255,0.15)', border: 'none',
+              borderRadius: '50%', width: 40, height: 40,
+              color: '#fff', fontSize: 18, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >✕</button>
+          {/* Lightbox prev/next */}
           {total > 1 && (
-            <span style={{ fontSize: 12, color: '#5a7a68', fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap', marginTop: 4 }}>
-              {index + 1} / {total}
-            </span>
+            <>
+              <button onClick={(e) => prev(e)} style={{
+                position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%',
+                width: 44, height: 44, color: '#fff', fontSize: 22,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>‹</button>
+              <button onClick={(e) => next(e)} style={{
+                position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%',
+                width: 44, height: 44, color: '#fff', fontSize: 22,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>›</button>
+            </>
+          )}
+        </div>
+      )}
+
+      <div style={{ background: 'white', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(116,198,157,0.15)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+        {/* Image area */}
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f7f4' }}>
+          {item.imageUrl ? (
+            <img
+              src={item.imageUrl}
+              alt={item.title}
+              onClick={() => setLightbox(true)}
+              style={{
+                maxWidth: '100%', maxHeight: 'min(480px, 60vw)',
+                width: 'auto', height: 'auto', display: 'block', margin: '0 auto',
+                cursor: 'zoom-in',
+              }}
+            />
+          ) : (
+            <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🖼</div>
+          )}
+
+          {/* Prev button */}
+          {total > 1 && (
+            <button onClick={prev} style={{
+              position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
+              background: 'rgba(26,58,42,0.75)', border: 'none', borderRadius: '50%',
+              width: 44, height: 44, color: '#74c69d', fontSize: 20,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+            }}>‹</button>
+          )}
+
+          {/* Next button */}
+          {total > 1 && (
+            <button onClick={next} style={{
+              position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+              background: 'rgba(26,58,42,0.75)', border: 'none', borderRadius: '50%',
+              width: 44, height: 44, color: '#74c69d', fontSize: 20,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+            }}>›</button>
+          )}
+
+          {/* Tap hint for mobile */}
+          {item.imageUrl && (
+            <div style={{
+              position: 'absolute', bottom: 8, right: 10,
+              background: 'rgba(0,0,0,0.45)', color: '#fff',
+              fontSize: 10, padding: '3px 8px', borderRadius: '2rem',
+              fontFamily: 'DM Sans, sans-serif', pointerEvents: 'none',
+            }}>
+              ketik untuk besar
+            </div>
           )}
         </div>
 
-        {/* Dot indicators */}
-        {total > 1 && (
-          <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
-            {items.map((_, i) => (
-              <button key={i} onClick={() => setIndex(i)} style={{
-                width: i === index ? 20 : 8, height: 8,
-                borderRadius: 4, border: 'none', cursor: 'pointer',
-                background: i === index ? '#1a3a2a' : 'rgba(45,106,79,0.2)',
-                transition: 'all 0.2s',
-                padding: 0,
-              }} />
-            ))}
+        {/* Info + dots */}
+        <div style={{ padding: '1rem 1.4rem 1.2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
+            <div>
+              {item.category && (
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#74c69d', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{item.category}</span>
+              )}
+              <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', fontSize: '1rem', margin: '0.3rem 0 0.3rem' }}>{item.title}</h3>
+              {item.description && (
+                <p style={{ fontSize: '0.83rem', color: '#5a7a68', lineHeight: 1.65, margin: 0 }}>{item.description}</p>
+              )}
+            </div>
+            {total > 1 && (
+              <span style={{ fontSize: 12, color: '#5a7a68', fontFamily: 'DM Sans, sans-serif', whiteSpace: 'nowrap', marginTop: 4 }}>
+                {index + 1} / {total}
+              </span>
+            )}
           </div>
-        )}
+
+          {/* Dot indicators */}
+          {total > 1 && (
+            <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
+              {items.map((_, i) => (
+                <button key={i} onClick={() => setIndex(i)} style={{
+                  width: i === index ? 20 : 8, height: 8,
+                  borderRadius: 4, border: 'none', cursor: 'pointer',
+                  background: i === index ? '#1a3a2a' : 'rgba(45,106,79,0.2)',
+                  transition: 'all 0.2s', padding: 0,
+                }} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
