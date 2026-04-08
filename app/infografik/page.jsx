@@ -73,6 +73,37 @@ export default function InfografikPage() {
 
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '4rem 2rem' }}>
 
+        {/* Admin-uploaded infografik — shown first */}
+        {uploads.length > 0 && (
+          <div style={{ marginBottom: '3rem' }}>
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', fontSize: '1.4rem', marginBottom: '1.2rem' }}>
+              🖼 Infografik Terkini
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {uploads.map((item) => (
+                <div key={item.id} style={{ background: 'white', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(116,198,157,0.15)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                  {item.imageUrl && (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                    />
+                  )}
+                  <div style={{ padding: '1rem 1.4rem 1.2rem' }}>
+                    {item.category && (
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#74c69d', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{item.category}</span>
+                    )}
+                    <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', fontSize: '1rem', margin: '0.3rem 0 0.4rem' }}>{item.title}</h3>
+                    {item.description && (
+                      <p style={{ fontSize: '0.85rem', color: '#5a7a68', lineHeight: 1.7, margin: 0 }}>{item.description}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Section 1: CO2 per capita comparison */}
         <div style={{ background: 'white', borderRadius: 24, padding: '2rem', marginBottom: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', border: '1px solid rgba(116,198,157,0.15)' }}>
           <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', marginBottom: '0.5rem' }}>🌍 CO₂ Per Kapita Mengikut Negara (tan/tahun)</h2>
@@ -162,39 +193,6 @@ export default function InfografikPage() {
             ))}
           </div>
         </div>
-
-        {/* Admin-uploaded infografik */}
-        {uploads.length > 0 && (
-          <div style={{ marginBottom: '2rem' }}>
-            <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', fontSize: '1.4rem', marginBottom: '1.2rem' }}>
-              🖼 Infografik Terkini
-            </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.2rem' }}>
-              {uploads.map((item) => (
-                <div key={item.id} style={{ background: 'white', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(116,198,157,0.15)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-                  {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
-                    />
-                  ) : (
-                    <div style={{ width: '100%', height: 180, background: '#f0f7f4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>🖼</div>
-                  )}
-                  <div style={{ padding: '1rem 1.2rem' }}>
-                    {item.category && (
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#74c69d', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{item.category}</span>
-                    )}
-                    <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', fontSize: '0.95rem', margin: '0.3rem 0 0.4rem' }}>{item.title}</h3>
-                    {item.description && (
-                      <p style={{ fontSize: '0.82rem', color: '#5a7a68', lineHeight: 1.6, margin: 0 }}>{item.description}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Facts strip */}
         <div style={{ background: '#1a3a2a', borderRadius: 20, padding: '2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem', textAlign: 'center' }}>
