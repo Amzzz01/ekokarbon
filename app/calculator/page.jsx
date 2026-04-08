@@ -92,15 +92,9 @@ export default function CalculatorPage() {
     setTimeout(() => setSaved(false), 3000);
   }
 
-  const cardStyle = {
-    background: 'white', borderRadius: 20,
-    padding: '2rem', boxShadow: '0 4px 30px rgba(0,0,0,0.06)',
-    border: '1px solid rgba(116,198,157,0.2)',
-  };
-
-  const btnPrimary = {
+const btnPrimary = {
     background: '#1a3a2a', color: '#b7e4c7',
-    border: 'none', padding: '0.85rem 2rem',
+    border: 'none', padding: '0.85rem 1.5rem',
     borderRadius: '3rem', fontSize: '0.95rem',
     fontWeight: 500, cursor: 'pointer',
     fontFamily: 'DM Sans, sans-serif',
@@ -109,13 +103,14 @@ export default function CalculatorPage() {
   const btnSecondary = {
     background: 'transparent', color: '#1a3a2a',
     border: '1.5px solid #1a3a2a',
-    padding: '0.85rem 2rem', borderRadius: '3rem',
+    padding: '0.85rem 1.5rem',
+    borderRadius: '3rem',
     fontSize: '0.95rem', fontWeight: 500,
     cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
   };
 
   return (
-    <div className="page-body" style={{ minHeight: '100vh', background: '#f8f4ef', padding: '3rem 1.25rem' }}>
+    <div className="page-body calc-page">
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
 
         {/* Header */}
@@ -128,7 +123,7 @@ export default function CalculatorPage() {
         </div>
 
         {/* Progress — desktop: step labels, mobile: dots + current label */}
-        <div className="calc-progress-desktop" style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', alignItems: 'center' }}>
+        <div className="calc-progress-desktop">
           {STEPS.slice(0, -1).map((s, i) => (
             <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
               <div style={{
@@ -157,7 +152,7 @@ export default function CalculatorPage() {
 
         {/* STEP 0 — Rumah */}
         {step === 0 && (
-          <div style={cardStyle}>
+          <div className="calc-card">
             <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.3rem', fontWeight: 700, color: '#1a3a2a', marginBottom: '1.5rem' }}>🏠 Rumah & Elektrik</h2>
 
             <Field label="Penggunaan elektrik bulanan (kWh)" hint="Semak bil TNB anda. Purata rumah Malaysia: 250-400 kWh/bulan">
@@ -183,7 +178,7 @@ export default function CalculatorPage() {
 
         {/* STEP 1 — Pengangkutan */}
         {step === 1 && (
-          <div style={cardStyle}>
+          <div className="calc-card">
             <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.3rem', fontWeight: 700, color: '#1a3a2a', marginBottom: '1.5rem' }}>🚗 Pengangkutan</h2>
 
             <Field label="Jenis kenderaan peribadi">
@@ -236,7 +231,7 @@ export default function CalculatorPage() {
 
         {/* STEP 2 — Penerbangan */}
         {step === 2 && (
-          <div style={cardStyle}>
+          <div className="calc-card">
             <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.3rem', fontWeight: 700, color: '#1a3a2a', marginBottom: '1.5rem' }}>✈️ Penerbangan (setahun)</h2>
             <p style={{ fontSize: '0.85rem', color: '#5a7a68', marginBottom: '1.5rem' }}>Kiraan termasuk perjalanan pergi-balik. Radiative forcing (kesan ketinggian) telah diambil kira.</p>
 
@@ -263,7 +258,7 @@ export default function CalculatorPage() {
 
         {/* STEP 3 — Diet & Lifestyle */}
         {step === 3 && (
-          <div style={cardStyle}>
+          <div className="calc-card">
             <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.3rem', fontWeight: 700, color: '#1a3a2a', marginBottom: '1.5rem' }}>🍽️ Makanan &amp; Gaya Hidup</h2>
 
             <Field label="Jenis diet harian anda">
@@ -273,14 +268,15 @@ export default function CalculatorPage() {
                 { val: 'mixed', label: '🍛 Campuran', sub: 'Daging sekali-sekala (biasa Malaysia)' },
                 { val: 'meat_heavy', label: '🥩 Banyak Daging', sub: 'Daging setiap hari' },
               ].map(opt => (
-                <button key={opt.val} onClick={() => set('diet', opt.val)} style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  width: '100%', padding: '0.85rem 1rem', marginBottom: '0.6rem',
-                  borderRadius: 12, border: '1.5px solid',
-                  borderColor: form.diet === opt.val ? '#2d6a4f' : 'rgba(45,106,79,0.2)',
-                  background: form.diet === opt.val ? 'rgba(45,106,79,0.06)' : 'white',
-                  cursor: 'pointer', textAlign: 'left', fontFamily: 'DM Sans, sans-serif',
-                }}>
+                <button key={opt.val} onClick={() => set('diet', opt.val)}
+                  className="calc-diet-btn"
+                  style={{
+                    width: '100%', padding: '0.85rem 1rem', marginBottom: '0.6rem',
+                    borderRadius: 12, border: '1.5px solid',
+                    borderColor: form.diet === opt.val ? '#2d6a4f' : 'rgba(45,106,79,0.2)',
+                    background: form.diet === opt.val ? 'rgba(45,106,79,0.06)' : 'white',
+                    cursor: 'pointer', textAlign: 'left', fontFamily: 'DM Sans, sans-serif',
+                  }}>
                   <span style={{ fontWeight: 500, color: '#1a3a2a' }}>{opt.label}</span>
                   <span style={{ fontSize: '0.8rem', color: '#5a7a68' }}>{opt.sub}</span>
                 </button>
@@ -288,23 +284,25 @@ export default function CalculatorPage() {
             </Field>
 
             <Field label="Tabiat membeli-belah bulanan" hint="Anggaran perbelanjaan pada pakaian, elektronik, dll">
-              {[
-                { val: 'low', label: 'Rendah', sub: '<RM200/bulan' },
-                { val: 'medium', label: 'Sederhana', sub: 'RM200-500/bulan' },
-                { val: 'high', label: 'Tinggi', sub: '>RM500/bulan' },
-              ].map(opt => (
-                <button key={opt.val} onClick={() => set('shopping', opt.val)} style={{
-                  display: 'inline-flex', flexDirection: 'column', alignItems: 'center',
-                  padding: '0.85rem 1.5rem', marginRight: '0.6rem', marginBottom: '0.6rem',
-                  borderRadius: 12, border: '1.5px solid',
-                  borderColor: form.shopping === opt.val ? '#2d6a4f' : 'rgba(45,106,79,0.2)',
-                  background: form.shopping === opt.val ? 'rgba(45,106,79,0.06)' : 'white',
-                  cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-                }}>
-                  <span style={{ fontWeight: 500, color: '#1a3a2a' }}>{opt.label}</span>
-                  <span style={{ fontSize: '0.75rem', color: '#5a7a68' }}>{opt.sub}</span>
-                </button>
-              ))}
+              <div className="calc-shopping-row">
+                {[
+                  { val: 'low', label: 'Rendah', sub: '<RM200/bulan' },
+                  { val: 'medium', label: 'Sederhana', sub: 'RM200-500/bulan' },
+                  { val: 'high', label: 'Tinggi', sub: '>RM500/bulan' },
+                ].map(opt => (
+                  <button key={opt.val} onClick={() => set('shopping', opt.val)} style={{
+                    flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    padding: '0.75rem 0.5rem',
+                    borderRadius: 12, border: '1.5px solid',
+                    borderColor: form.shopping === opt.val ? '#2d6a4f' : 'rgba(45,106,79,0.2)',
+                    background: form.shopping === opt.val ? 'rgba(45,106,79,0.06)' : 'white',
+                    cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+                  }}>
+                    <span style={{ fontWeight: 500, color: '#1a3a2a' }}>{opt.label}</span>
+                    <span style={{ fontSize: '0.72rem', color: '#5a7a68', textAlign: 'center', marginTop: 2 }}>{opt.sub}</span>
+                  </button>
+                ))}
+              </div>
             </Field>
           </div>
         )}
@@ -313,7 +311,7 @@ export default function CalculatorPage() {
         {step === 4 && (
           <div>
             {/* Main result card */}
-            <div style={{ background: '#1a3a2a', borderRadius: 24, padding: '2.5rem', marginBottom: '1.5rem', color: 'white', textAlign: 'center' }}>
+            <div className="calc-result-card">
               <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Jumlah Jejak Karbon Tahunan Anda</div>
               <div style={{ fontFamily: 'Syne, sans-serif', fontSize: 'clamp(3rem, 8vw, 5rem)', fontWeight: 800, color: rating?.color || '#74c69d', lineHeight: 1 }}>
                 {totalTonnes.toFixed(1)}
@@ -344,7 +342,7 @@ export default function CalculatorPage() {
             </div>
 
             {/* Breakdown chart */}
-            <div style={{ ...cardStyle, marginBottom: '1.5rem' }}>
+            <div className="calc-card" style={{ marginBottom: '1.5rem' }}>
               <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', marginBottom: '1.5rem' }}>📊 Pecahan Mengikut Kategori</h3>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
@@ -369,7 +367,7 @@ export default function CalculatorPage() {
             </div>
 
             {/* Tips */}
-            <div style={{ ...cardStyle, marginBottom: '1.5rem' }}>
+            <div className="calc-card" style={{ marginBottom: '1.5rem' }}>
               <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', marginBottom: '1rem' }}>💡 Tips Untuk Anda</h3>
               {tips.map((tip, i) => (
                 <div key={i} style={{ display: 'flex', gap: '0.8rem', padding: '0.75rem 0', borderBottom: i < tips.length - 1 ? '1px solid rgba(45,106,79,0.08)' : 'none' }}>
@@ -380,7 +378,7 @@ export default function CalculatorPage() {
             </div>
 
             {/* Save & actions */}
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div className="calc-actions">
               <button onClick={handleSave} style={{ ...btnPrimary, opacity: saved ? 0.7 : 1 }}>
                 {saved ? '✓ Disimpan!' : '💾 Simpan Keputusan'}
               </button>
@@ -393,7 +391,7 @@ export default function CalculatorPage() {
 
         {/* Navigation buttons */}
         {step < 4 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1.5rem' }}>
+          <div className="calc-nav">
             <button onClick={() => setStep(s => Math.max(0, s - 1))} style={{ ...btnSecondary, visibility: step === 0 ? 'hidden' : 'visible' }}>
               ← Sebelum
             </button>

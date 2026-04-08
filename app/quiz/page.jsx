@@ -137,13 +137,13 @@ export default function QuizPage() {
   };
 
   if (loading) return (
-    <div className="page-body" style={{ minHeight: '100vh', background: '#f8f4ef', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className="page-body quiz-page">
       <div style={{ color: '#5a7a68', fontFamily: 'DM Sans, sans-serif' }}>Memuatkan soalan...</div>
     </div>
   );
 
   if (!started) return (
-    <div className="page-body" style={{ minHeight: '100vh', background: '#f8f4ef', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.25rem' }}>
+    <div className="page-body quiz-page">
       <div style={{ maxWidth: 560, width: '100%', textAlign: 'center' }}>
         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🧩</div>
         <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '2.5rem', color: '#1a3a2a', letterSpacing: '-1.5px', marginBottom: '1rem' }}>Quiz Kesedaran Karbon</h1>
@@ -163,7 +163,7 @@ export default function QuizPage() {
   if (finished) {
     const grade = getGrade();
     return (
-      <div className="page-body" style={{ minHeight: '100vh', background: '#f8f4ef', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.25rem' }}>
+      <div className="page-body quiz-page">
         <div style={{ maxWidth: 600, width: '100%' }}>
           <div style={{ background: '#1a3a2a', borderRadius: 24, padding: '2.5rem', textAlign: 'center', color: 'white', marginBottom: '1.5rem' }}>
             <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '5rem', fontWeight: 800, color: grade.color, lineHeight: 1 }}>{pct}%</div>
@@ -193,7 +193,7 @@ export default function QuizPage() {
   }
 
   return (
-    <div className="page-body" style={{ minHeight: '100vh', background: '#f8f4ef', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.25rem' }}>
+    <div className="page-body quiz-page">
       <div style={{ maxWidth: 600, width: '100%' }}>
         {/* Progress */}
         <div style={{ display: 'flex', gap: 4, marginBottom: '2rem' }}>
