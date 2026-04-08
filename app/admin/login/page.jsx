@@ -41,9 +41,20 @@ export default function AdminLoginPage() {
         maxWidth: 400,
         boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
       }}>
-        <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: 24, fontWeight: 700, color: '#1a3a2a', marginBottom: 4 }}>
-          EkoKarbon Admin
-        </h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+          <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: 24, fontWeight: 700, color: '#1a3a2a', margin: 0 }}>
+            EkoKarbon Admin
+          </h1>
+          <a href="/" style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            fontSize: 12, color: '#5a7a68', textDecoration: 'none',
+            background: '#f8f4ef', border: '1px solid rgba(45,106,79,0.15)',
+            borderRadius: '3rem', padding: '5px 12px',
+            fontFamily: 'DM Sans, sans-serif',
+          }}>
+            ← Laman Utama
+          </a>
+        </div>
         <p style={{ color: '#5a7a68', fontSize: 14, marginBottom: 28 }}>Log masuk untuk meneruskan</p>
 
         {error && (
