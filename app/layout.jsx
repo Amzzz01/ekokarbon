@@ -1,7 +1,5 @@
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import BottomNav from '@/components/BottomNav';
-import Footer from '@/components/Footer';
+import PublicShell from '@/components/PublicShell';
 import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
@@ -18,16 +16,7 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
       </head>
       <body>
-        <Navbar />
-        <main className="page-main">
-          {children}
-        </main>
-        {/* Footer hidden on mobile — bottom nav replaces it */}
-        <div className="desktop-footer">
-          <Footer />
-        </div>
-        {/* Bottom nav — mobile only */}
-        <BottomNav />
+        <PublicShell>{children}</PublicShell>
         <Analytics />
       </body>
     </html>
