@@ -44,11 +44,12 @@ export default function AdminRegisterPage() {
       alignItems: 'center',
       justifyContent: 'center',
       fontFamily: 'DM Sans, sans-serif',
+      padding: '1.5rem 1rem',
     }}>
       <div style={{
         background: '#fff',
         borderRadius: 16,
-        padding: '40px 36px',
+        padding: 'clamp(24px, 5vw, 40px) clamp(20px, 5vw, 36px)',
         width: '100%',
         maxWidth: 400,
         boxShadow: '0 8px 40px rgba(0,0,0,0.18)',

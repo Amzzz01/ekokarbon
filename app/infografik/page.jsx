@@ -19,7 +19,7 @@ function InfografikCarousel({ items }) {
           <img
             src={item.imageUrl}
             alt={item.title}
-            style={{ maxWidth: '100%', maxHeight: 480, width: 'auto', height: 'auto', display: 'block', margin: '0 auto' }}
+            style={{ maxWidth: '100%', maxHeight: 'min(480px, 60vw)', width: 'auto', height: 'auto', display: 'block', margin: '0 auto' }}
           />
         ) : (
           <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🖼</div>
@@ -28,22 +28,22 @@ function InfografikCarousel({ items }) {
         {/* Prev button */}
         {total > 1 && (
           <button onClick={prev} style={{
-            position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+            position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
             background: 'rgba(26,58,42,0.75)', border: 'none', borderRadius: '50%',
-            width: 40, height: 40, color: '#74c69d', fontSize: 18,
+            width: 44, height: 44, color: '#74c69d', fontSize: 20,
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backdropFilter: 'blur(4px)',
+            backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
           }}>‹</button>
         )}
 
         {/* Next button */}
         {total > 1 && (
           <button onClick={next} style={{
-            position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+            position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
             background: 'rgba(26,58,42,0.75)', border: 'none', borderRadius: '50%',
-            width: 40, height: 40, color: '#74c69d', fontSize: 18,
+            width: 44, height: 44, color: '#74c69d', fontSize: 20,
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backdropFilter: 'blur(4px)',
+            backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
           }}>›</button>
         )}
       </div>
