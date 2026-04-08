@@ -1,3 +1,7 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { getTips } from '@/lib/adminData';
+
 const categories = [
   {
     icon: '⚡', title: 'Jimat Elektrik', color: '#fff8e1', accent: '#f59e0b',
@@ -53,6 +57,14 @@ const categories = [
 const impactColor = { Tinggi: '#22c55e', Sederhana: '#f59e0b', Rendah: '#94a3b8' };
 
 export default function TipsPage() {
+  const [adminTips, setAdminTips] = useState([]);
+
+  useEffect(() => {
+    getTips()
+      .then((data) => setAdminTips(data.filter((t) => t.status === 'published')))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="page-body" style={{ minHeight: '100vh', background: '#f8f4ef', padding: '3rem 1.25rem' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
@@ -76,6 +88,31 @@ export default function TipsPage() {
             ))}
           </div>
         </div>
+
+        {/* Admin-uploaded tips — published only */}
+        {adminTips.length > 0 && (
+          <div style={{ marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: '#e8f5e9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>✨</div>
+              <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.3rem', color: '#1a3a2a' }}>Tips Terkini</h2>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+              {adminTips.map((tip) => (
+                <div key={tip.id} style={{ background: 'white', borderRadius: 16, padding: '1.25rem', border: '1px solid rgba(116,198,157,0.15)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', borderLeft: '3px solid #74c69d' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem', gap: '0.5rem' }}>
+                    <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.95rem', color: '#1a3a2a', lineHeight: 1.3 }}>
+                      {tip.icon && <span style={{ marginRight: 6 }}>{tip.icon}</span>}{tip.title}
+                    </h3>
+                    {tip.category && (
+                      <span style={{ background: 'rgba(116,198,157,0.15)', color: '#2d6a4f', fontSize: '0.65rem', fontWeight: 700, padding: '0.2rem 0.6rem', borderRadius: '2rem', whiteSpace: 'nowrap', flexShrink: 0 }}>{tip.category}</span>
+                    )}
+                  </div>
+                  <p style={{ fontSize: '0.83rem', color: '#5a7a68', lineHeight: 1.6 }}>{tip.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Categories */}
         {categories.map(cat => (

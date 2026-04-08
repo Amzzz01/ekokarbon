@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { saveQuizScore } from '@/lib/storage';
+import { getQuiz } from '@/lib/adminData';
 
 const QUESTIONS = [
   {
@@ -72,9 +73,28 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState([]);
   const [finished, setFinished] = useState(false);
   const [showExplain, setShowExplain] = useState(false);
+  const [questions, setQuestions] = useState(QUESTIONS);
+  const [loading, setLoading] = useState(true);
 
-  const q = QUESTIONS[current];
-  const score = answers.filter((a, i) => a === QUESTIONS[i].answer).length;
+  useEffect(() => {
+    getQuiz()
+      .then((data) => {
+        if (data.length > 0) {
+          // Map Firestore format → quiz format
+          setQuestions(data.map((d) => ({
+            q: d.question,
+            options: d.options,
+            answer: d.answer,
+            explain: d.explain || '',
+          })));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const q = questions[current];
+  const score = answers.filter((a, i) => a === questions[i].answer).length;
 
   function handleSelect(idx) {
     if (selected !== null) return;
@@ -87,9 +107,9 @@ export default function QuizPage() {
     setAnswers(newAnswers);
     setSelected(null);
     setShowExplain(false);
-    if (current + 1 >= QUESTIONS.length) {
+    if (current + 1 >= questions.length) {
       setFinished(true);
-      saveQuizScore(newAnswers.filter((a, i) => a === QUESTIONS[i].answer).length, QUESTIONS.length);
+      saveQuizScore(newAnswers.filter((a, i) => a === questions[i].answer).length, questions.length);
     } else {
       setCurrent(c => c + 1);
     }
@@ -100,8 +120,8 @@ export default function QuizPage() {
     setAnswers([]); setFinished(false); setShowExplain(false);
   }
 
-  const finalScore = answers.filter((a, i) => a === QUESTIONS[i].answer).length;
-  const pct = Math.round((finalScore / QUESTIONS.length) * 100);
+  const finalScore = answers.filter((a, i) => a === questions[i].answer).length;
+  const pct = Math.round((finalScore / questions.length) * 100);
 
   const getGrade = () => {
     if (pct >= 90) return { label: 'Cemerlang! 🌟', color: '#22c55e' };
@@ -116,16 +136,22 @@ export default function QuizPage() {
     fontWeight: 500, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
   };
 
+  if (loading) return (
+    <div className="page-body" style={{ minHeight: '100vh', background: '#f8f4ef', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ color: '#5a7a68', fontFamily: 'DM Sans, sans-serif' }}>Memuatkan soalan...</div>
+    </div>
+  );
+
   if (!started) return (
     <div className="page-body" style={{ minHeight: '100vh', background: '#f8f4ef', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.25rem' }}>
       <div style={{ maxWidth: 560, width: '100%', textAlign: 'center' }}>
         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🧩</div>
         <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '2.5rem', color: '#1a3a2a', letterSpacing: '-1.5px', marginBottom: '1rem' }}>Quiz Kesedaran Karbon</h1>
         <p style={{ color: '#5a7a68', lineHeight: 1.7, marginBottom: '2rem' }}>
-          {QUESTIONS.length} soalan tentang jejak karbon, iklim, dan cara hidup lestari. Uji pengetahuan anda sekarang!
+          {questions.length} soalan tentang jejak karbon, iklim, dan cara hidup lestari. Uji pengetahuan anda sekarang!
         </p>
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem', flexWrap: 'wrap' }}>
-          {['10 soalan', '~5 minit', 'Skor disimpan'].map(t => (
+          {[`${questions.length} soalan`, '~5 minit', 'Skor disimpan'].map(t => (
             <div key={t} style={{ background: 'rgba(45,106,79,0.1)', borderRadius: '2rem', padding: '0.4rem 1rem', fontSize: '0.85rem', color: '#2d6a4f', fontWeight: 500 }}>{t}</div>
           ))}
         </div>
@@ -142,13 +168,13 @@ export default function QuizPage() {
           <div style={{ background: '#1a3a2a', borderRadius: 24, padding: '2.5rem', textAlign: 'center', color: 'white', marginBottom: '1.5rem' }}>
             <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '5rem', fontWeight: 800, color: grade.color, lineHeight: 1 }}>{pct}%</div>
             <div style={{ fontSize: '1.5rem', fontFamily: 'Syne, sans-serif', marginTop: '0.5rem' }}>{grade.label}</div>
-            <div style={{ color: 'rgba(255,255,255,0.6)', marginTop: '0.5rem' }}>{finalScore} / {QUESTIONS.length} betul</div>
+            <div style={{ color: 'rgba(255,255,255,0.6)', marginTop: '0.5rem' }}>{finalScore} / {questions.length} betul</div>
           </div>
 
           <div style={{ background: 'white', borderRadius: 20, padding: '1.5rem', marginBottom: '1.5rem', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', border: '1px solid rgba(116,198,157,0.2)' }}>
             <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', marginBottom: '1rem' }}>Semakan Jawapan</h3>
-            {QUESTIONS.map((q, i) => (
-              <div key={i} style={{ padding: '0.75rem 0', borderBottom: i < QUESTIONS.length - 1 ? '1px solid rgba(45,106,79,0.08)' : 'none', display: 'flex', gap: '0.8rem', alignItems: 'flex-start' }}>
+            {questions.map((q, i) => (
+              <div key={i} style={{ padding: '0.75rem 0', borderBottom: i < questions.length - 1 ? '1px solid rgba(45,106,79,0.08)' : 'none', display: 'flex', gap: '0.8rem', alignItems: 'flex-start' }}>
                 <span style={{ fontSize: '1rem' }}>{answers[i] === q.answer ? '✅' : '❌'}</span>
                 <div>
                   <div style={{ fontSize: '0.85rem', fontWeight: 500, color: '#1a3a2a', marginBottom: '0.2rem' }}>{q.q}</div>
@@ -171,13 +197,13 @@ export default function QuizPage() {
       <div style={{ maxWidth: 600, width: '100%' }}>
         {/* Progress */}
         <div style={{ display: 'flex', gap: 4, marginBottom: '2rem' }}>
-          {QUESTIONS.map((_, i) => (
+          {questions.map((_, i) => (
             <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: i < current ? '#2d6a4f' : i === current ? '#74c69d' : 'rgba(45,106,79,0.15)' }} />
           ))}
         </div>
 
         <div style={{ background: 'white', borderRadius: 24, padding: '2rem', boxShadow: '0 4px 30px rgba(0,0,0,0.06)', border: '1px solid rgba(116,198,157,0.2)' }}>
-          <div style={{ fontSize: '0.75rem', color: '#5a7a68', marginBottom: '1rem', fontWeight: 500 }}>Soalan {current + 1} daripada {QUESTIONS.length}</div>
+          <div style={{ fontSize: '0.75rem', color: '#5a7a68', marginBottom: '1rem', fontWeight: 500 }}>Soalan {current + 1} daripada {questions.length}</div>
           <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.15rem', color: '#1a3a2a', marginBottom: '1.5rem', lineHeight: 1.4 }}>{q.q}</h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', marginBottom: '1.5rem' }}>
@@ -214,7 +240,7 @@ export default function QuizPage() {
 
           {selected !== null && (
             <button onClick={handleNext} style={{ width: '100%', background: '#1a3a2a', color: '#b7e4c7', border: 'none', padding: '0.9rem', borderRadius: '3rem', fontFamily: 'DM Sans, sans-serif', fontWeight: 500, cursor: 'pointer', fontSize: '0.95rem' }}>
-              {current + 1 >= QUESTIONS.length ? '🏁 Lihat Keputusan' : 'Soalan Seterusnya →'}
+              {current + 1 >= questions.length ? '🏁 Lihat Keputusan' : 'Soalan Seterusnya →'}
             </button>
           )}
         </div>
