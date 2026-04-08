@@ -58,12 +58,6 @@ export default function AdminRegisterPage() {
     <>
       {/* ── MOBILE ── */}
       <div className="admin-mobile" style={{ minHeight: '100vh', background: '#1a3a2a', position: 'relative', overflow: 'hidden' }}>
-        {/* Status bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 20px 0', color: '#b7e4c7', fontSize: 12, fontFamily: 'DM Sans, sans-serif' }}>
-          <span>9:41</span>
-          <div style={{ display: 'flex', gap: 6 }}><span>▲▲▲</span><span>WiFi</span><span>🔋</span></div>
-        </div>
-
         {/* Back pill */}
         <div style={{ padding: '12px 20px' }}>
           <Link href="/admin/login" style={{
