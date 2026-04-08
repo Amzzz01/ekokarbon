@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Settings } from 'lucide-react';
+import { Leaf, UserCog } from 'lucide-react';
 
 const links = [
   { href: '/', label: 'Utama' },
@@ -63,7 +63,7 @@ export default function Navbar() {
             onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
             onMouseLeave={e => e.currentTarget.style.opacity = '1'}
           >
-            <Settings size={17} color="#74c69d" />
+            <UserCog size={17} color="#74c69d" />
           </Link>
         </div>
       </div>
