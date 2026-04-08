@@ -11,7 +11,7 @@ const navItems = [
   { label: 'Infografik', href: '/admin/infografik', icon: '🖼' },
 ];
 
-export default function AdminSidebar({ isOpen, onClose }) {
+export default function AdminSidebar({ isOpen, onClose, isMobile }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -26,15 +26,14 @@ export default function AdminSidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Mobile overlay backdrop */}
-      {isOpen && (
+      {/* Backdrop — mobile only */}
+      {isMobile && isOpen && (
         <div
           onClick={onClose}
           style={{
             position: 'fixed', inset: 0,
             background: 'rgba(0,0,0,0.45)',
             zIndex: 98,
-            display: 'block',
           }}
         />
       )}
@@ -66,14 +65,6 @@ export default function AdminSidebar({ isOpen, onClose }) {
             </span>
             <div style={{ fontSize: 11, color: '#5a7a68', marginTop: 2 }}>Admin Panel</div>
           </div>
-          {/* Close button — mobile only */}
-          {onClose && (
-            <button onClick={onClose} style={{
-              background: 'transparent', border: 'none',
-              color: '#5a7a68', fontSize: 20, cursor: 'pointer', lineHeight: 1,
-              padding: '0 4px',
-            }}>✕</button>
-          )}
         </div>
 
         {/* Nav */}

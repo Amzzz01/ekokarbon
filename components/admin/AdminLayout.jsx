@@ -12,22 +12,56 @@ const pageTitles = {
   '/admin/infografik': 'Infografik',
 };
 
+function HamburgerButton({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        background: 'transparent',
+        border: 'none',
+        cursor: 'pointer',
+        padding: 6,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 8,
+        flexShrink: 0,
+      }}
+      aria-label="Toggle menu"
+    >
+      <span style={{ display: 'block', width: 22, height: 2, background: '#1a3a2a', borderRadius: 2 }} />
+      <span style={{ display: 'block', width: 22, height: 2, background: '#1a3a2a', borderRadius: 2 }} />
+      <span style={{ display: 'block', width: 22, height: 2, background: '#1a3a2a', borderRadius: 2 }} />
+    </button>
+  );
+}
+
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const title = pageTitles[pathname] || 'Admin';
   const [initials, setInitials] = useState('A');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    function check() { setIsMobile(window.innerWidth < 768); }
+    function check() {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // On mobile default closed, desktop default open
+      if (mobile) setSidebarOpen(false);
+      else setSidebarOpen(true);
+    }
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Close sidebar on route change (mobile)
-  useEffect(() => { setSidebarOpen(false); }, [pathname]);
+  // Close sidebar on route change on mobile
+  useEffect(() => {
+    if (isMobile) setSidebarOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -41,21 +75,24 @@ export default function AdminLayout({ children }) {
     return unsub;
   }, []);
 
+  const sidebarWidth = 220;
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f4ef' }}>
-      {/* Sidebar — always visible on desktop, drawer on mobile */}
       <AdminSidebar
-        isOpen={isMobile ? sidebarOpen : true}
-        onClose={isMobile ? () => setSidebarOpen(false) : undefined}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        isMobile={isMobile}
       />
 
       {/* Main content */}
       <div style={{
-        marginLeft: isMobile ? 0 : 220,
+        marginLeft: !isMobile && sidebarOpen ? sidebarWidth : 0,
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
         minWidth: 0,
+        transition: 'margin-left 0.25s ease',
       }}>
         {/* Topbar */}
         <div style={{
@@ -65,34 +102,14 @@ export default function AdminLayout({ children }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: isMobile ? '0 16px' : '0 32px',
+          padding: isMobile ? '0 16px' : '0 24px',
           position: 'sticky',
           top: 0,
           zIndex: 50,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            {/* Hamburger — mobile only */}
-            {isMobile && (
-              <button
-                onClick={() => setSidebarOpen(true)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 4,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                aria-label="Open menu"
-              >
-                <span style={{ display: 'block', width: 22, height: 2, background: '#1a3a2a', borderRadius: 2 }} />
-                <span style={{ display: 'block', width: 22, height: 2, background: '#1a3a2a', borderRadius: 2 }} />
-                <span style={{ display: 'block', width: 22, height: 2, background: '#1a3a2a', borderRadius: 2 }} />
-              </button>
-            )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {/* Hamburger — always visible, toggles open/close */}
+            <HamburgerButton onClick={() => setSidebarOpen((v) => !v)} />
             <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: isMobile ? 16 : 18, color: '#1a3a2a' }}>
               {title}
             </span>
