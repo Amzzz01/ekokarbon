@@ -1,16 +1,38 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { Download } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid/*, Legend, PieChart, Pie*/ } from 'recharts';
 import { getInfografik } from '@/lib/adminData';
 
 function InfografikCarousel({ items }) {
   const [index, setIndex] = useState(0);
   const [lightbox, setLightbox] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const item = items[index];
   const total = items.length;
 
   function prev(e) { e?.stopPropagation(); setIndex((i) => (i - 1 + total) % total); }
   function next(e) { e?.stopPropagation(); setIndex((i) => (i + 1) % total); }
+
+  async function handleDownload(e) {
+    e.stopPropagation();
+    if (downloading || !item.imageUrl) return;
+    setDownloading(true);
+    try {
+      const res = await fetch(item.imageUrl);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const ext = blob.type.split('/')[1] || 'jpg';
+      const filename = (item.title || 'infografik').replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.' + ext;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   return (
     <>
@@ -40,6 +62,27 @@ function InfografikCarousel({ items }) {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >✕</button>
+          <button
+            onClick={handleDownload}
+            disabled={downloading}
+            style={{
+              position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+              background: downloading ? 'rgba(255,255,255,0.7)' : 'white',
+              border: 'none', borderRadius: '2rem',
+              padding: '0.55rem 1.25rem',
+              color: '#1a3a2a', fontFamily: 'DM Sans, sans-serif',
+              fontWeight: 600, fontSize: '0.88rem',
+              cursor: downloading ? 'default' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: '0.45rem',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+              transition: 'opacity 0.15s',
+              opacity: downloading ? 0.75 : 1,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Download size={15} strokeWidth={2.5} />
+            {downloading ? 'Memuat turun…' : 'Muat Turun'}
+          </button>
           {/* Lightbox prev/next */}
           {total > 1 && (
             <>

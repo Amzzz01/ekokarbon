@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Eye, EyeOff, User, Leaf, Check } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, Leaf, Check, KeyRound } from 'lucide-react';
 import { register } from '@/lib/adminAuth';
 
 const mobileInputWrap = {
@@ -31,12 +31,17 @@ export default function AdminRegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
+  const [secretCode, setSecretCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    if (secretCode !== process.env.NEXT_PUBLIC_REGISTER_SECRET) {
+      setError('Kod rahsia tidak sah');
+      return;
+    }
     setLoading(true);
     try {
       await register(name, email, password);
@@ -105,6 +110,13 @@ export default function AdminRegisterPage() {
                 </button>
               </div>
             </div>
+            <div>
+              <span style={mobileLabel}>Kod Rahsia</span>
+              <div style={mobileInputWrap}>
+                <KeyRound size={15} color="#5a7a68" />
+                <input type="password" value={secretCode} onChange={e => setSecretCode(e.target.value)} required placeholder="Masukkan kod rahsia" style={mobileInputBase} />
+              </div>
+            </div>
             <button type="submit" disabled={loading} style={{ background: '#1a3a2a', color: '#b7e4c7', border: 'none', borderRadius: 16, padding: 15, fontSize: 15, fontWeight: 500, fontFamily: 'DM Sans, sans-serif', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, marginTop: 4 }}>
               {loading ? 'Sedang mendaftar...' : 'Daftar Sekarang'}
             </button>
@@ -134,6 +146,13 @@ export default function AdminRegisterPage() {
             <div>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#1a3a2a', marginBottom: 6 }}>Kata Laluan</label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} style={desktopInputStyle} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#1a3a2a', marginBottom: 6 }}>Kod Rahsia</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid rgba(45,106,79,0.2)', borderRadius: 8, padding: '10px 14px', boxSizing: 'border-box' }}>
+                <KeyRound size={15} color="#5a7a68" />
+                <input type="password" value={secretCode} onChange={e => setSecretCode(e.target.value)} required placeholder="Masukkan kod rahsia" style={{ ...desktopInputStyle, border: 'none', padding: 0, width: '100%' }} />
+              </div>
             </div>
             <button type="submit" disabled={loading} style={{ background: '#1a3a2a', color: '#74c69d', border: 'none', borderRadius: '3rem', padding: '12px', fontSize: 15, fontWeight: 600, fontFamily: 'DM Sans, sans-serif', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, marginTop: 4 }}>
               {loading ? 'Sedang mendaftar...' : 'Daftar'}

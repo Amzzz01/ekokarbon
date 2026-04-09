@@ -1,90 +1,25 @@
-claude "Update the admin login and register pages to be responsive — mobile layout stays as designed, desktop gets a different centered layout.
+Add agriculture step to the existing carbon footprint calculator WITHOUT changing any existing design, layout, or styles.
 
-Files to create/update:
-- app/admin/layout.jsx
-- app/admin/login/page.jsx
-- app/admin/register/page.jsx
+=== ONLY ADD, DO NOT MODIFY EXISTING CODE ===
 
-DESKTOP LAYOUT (min-width: 768px):
-- Full page background: #1a3a2a (dark forest green)
-- Add a subtle pattern or keep it solid
-- Center a white card (max-width 420px, border-radius 24px, padding 40px) vertically and horizontally using flexbox (min-height: 100vh, display: flex, align-items: center, justify-content: center)
-- Inside the card top: EkoKarbon leaf icon badge (56x56) + 'EkoKarbon' Syne 800 title + 'Admin Panel' lime uppercase subtitle — all centered
-- Then the form fields below (same fields as mobile)
-- CTA button full width inside card
-- Footer link (register/login) below button
-- No status bar, no back button pill on desktop — replace with a plain text link '← Laman Utama' or '← Log Masuk' at the very top of the card in --muted color
+1. In `lib/carbonFactors.js`:
+   - ADD agriculture object inside FACTORS (do not touch existing factors):
+     agriculture: {
+       livestock: { cattle: 2500, goat: 165, poultry: 7 },
+       fertiliser: 5.7
+     }
+   - ADD agriculture tips inside getTips() for when agriculture is the highest emission source:
+     'Kurangkan bilangan ternakan atau guna sistem pengurusan najis yang lebih baik'
+     'Guna baja organik sebagai ganti baja nitrogen sintetik'
+     'Amalkan pertanian karbon rendah seperti penanaman semula hutan'
 
-MOBILE LAYOUT (max-width: 767px):
-Keep exactly as previously designed:
-- Dark forest green top hero with status bar, back pill button, brand center
-- White bottom sheet (position absolute, bottom 0, border-radius 32px 32px 0 0)
-- All fields same as before
-
-IMPLEMENTATION:
-Use a single responsive component per page with a mediaQuery approach — detect via CSS using a wrapper div that shows/hides sections:
-
-Option: use two separate layout sections with CSS:
-  .admin-mobile { display: block } and .admin-desktop { display: none }
-  @media (min-width: 768px): .admin-mobile { display: none } and .admin-desktop { display: flex }
-
-Or use useMediaQuery hook if preferred.
-
---- app/admin/layout.jsx ---
-- No Navbar, BottomNav, or Footer
-- Body: min-height 100vh, background #1a3a2a
-- Children only
-
---- app/admin/login/page.jsx ---
-'use client'
-MOBILE section (hidden on desktop):
-1. Full screen, background #1a3a2a
-2. Status bar row (9:41, icons)
-3. Back pill button top-left → Link href='/'
-4. Brand center: 72x72 badge, 'EkoKarbon' + 'Admin Panel'
-5. White bottom sheet absolute bottom:
-   - Subtitle 'Log masuk untuk meneruskan'
-   - Email input with icon
-   - Password input with icon + eye toggle + forgot link
-   - 'Log Masuk' CTA button
-   - atau divider
-   - 'Belum ada akaun? Daftar' link
-
-DESKTOP section (hidden on mobile):
-1. Full page flex center, background #1a3a2a
-2. White card (max-width 420px, border-radius 24px, padding 40px, background white)
-3. Top of card: '← Laman Utama' plain Link in #5a7a68, small 13px, margin-bottom 24px
-4. Brand: 56x56 badge, 'EkoKarbon' Syne 800 22px, 'Admin Panel' lime 11px uppercase — all centered, margin-bottom 32px
-5. Form: same fields as mobile (Email, Password with eye + forgot link)
-6. 'Log Masuk' full-width button
-7. atau divider
-8. 'Belum ada akaun? Daftar' link centered
-
---- app/admin/register/page.jsx ---
-'use client'
-MOBILE section (hidden on desktop):
-Same as previously designed register mobile
-
-DESKTOP section (hidden on mobile):
-1. Full page flex center, background #1a3a2a
-2. White card (max-width 420px, border-radius 24px, padding 40px)
-3. Top: '← Log Masuk' Link in #5a7a68
-4. Brand centered: 56x56 badge, 'Cipta Akaun', 'Daftar sebagai admin baru'
-5. Form fields:
-   - Name row: 2-col grid, Nama Pertama + Nama Akhir with person icon
-   - Email field with icon
-   - Password field with eye toggle
-   - Confirm password field with green tick
-   - Terms checkbox (pre-checked) + terms text with links
-6. 'Daftar Sekarang' full-width button
-7. 'Sudah ada akaun? Log Masuk' link centered
-
-SHARED STYLES:
-- Input bg: #f0f7f4, border: 1px solid rgba(45,106,79,0.18), border-radius: 12px, padding: 11px 14px
-- Input row: display flex, align-items center, gap 10px
-- Label: font-size 11px, font-weight 500, color #5a7a68, text-transform uppercase, letter-spacing 0.08em, margin-bottom 6px
-- CTA button: background #1a3a2a, color #b7e4c7, border-radius 16px, padding 15px, font-size 15px, font-weight 500, width 100%, border none, cursor pointer
-- All links use Next.js Link component
-- Fonts: Syne (headings), DM Sans (body) — already loaded globally
-- Use inline styles only, no Tailwind classes
-- lucide-react available if needed, prefer inline SVG for decorative icons"
+2. In `app/calculator/page.jsx`:
+   - ADD 'Pertanian' into STEPS array between 'Penerbangan' and 'Makanan & Gaya Hidup', do not rename or remove existing steps
+   - ADD to form state only these 4 new fields: cattle: 0, goat: 0, poultry: 0, fertiliser_kg: 0
+   - ADD agriculture calculation inside calculate() function, do not touch existing elec/transport/flights/diet/shopping lines:
+     const agriculture = (form.cattle * FACTORS.agriculture.livestock.cattle) + (form.goat * FACTORS.agriculture.livestock.goat) + (form.poultry * FACTORS.agriculture.livestock.poultry) + (form.fertiliser_kg * FACTORS.agriculture.fertiliser)
+   - ADD agriculture to the return object of calculate()
+   - ADD new step JSX block for 'Pertanian' using EXACTLY the same cardStyle, inputStyle, labelStyle, and Field component already used in other steps — copy the same pattern
+   - ADD to chartData array: { name: 'Pertanian', value: +(breakdown.agriculture / 1000).toFixed(2), fill: '#a3b18a' }
+   - UPDATE step condition numbers only where needed to account for the new step inserted (shift existing step === 3 to step === 4, step === 4 to step === 5)
+   - DO NOT change any existing styles, components, or JSX outside of what is listed above
