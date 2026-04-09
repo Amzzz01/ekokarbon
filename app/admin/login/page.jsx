@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff, Leaf } from 'lucide-react';
 import { login } from '@/lib/adminAuth';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 const mobileInputWrap = {
   display: 'flex', alignItems: 'center', gap: 10,
@@ -38,7 +40,12 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      const user = await login(email, password);
+      if (!user.emailVerified) {
+        await signOut(auth);
+        setError('Sila sahkan emel anda dahulu. Semak peti masuk anda.');
+        return;
+      }
       router.push('/admin/dashboard');
     } catch {
       setError('Email atau kata laluan tidak sah.');

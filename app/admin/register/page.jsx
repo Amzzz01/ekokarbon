@@ -32,6 +32,7 @@ export default function AdminRegisterPage() {
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [secretCode, setSecretCode] = useState('');
+  const [registered, setRegistered] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -45,7 +46,7 @@ export default function AdminRegisterPage() {
     setLoading(true);
     try {
       await register(name, email, password);
-      router.push('/admin/dashboard');
+      setRegistered(true);
     } catch (err) {
       setError(err.message || 'Pendaftaran gagal. Sila cuba lagi.');
     } finally {
@@ -57,6 +58,42 @@ export default function AdminRegisterPage() {
     <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>
       {error}
     </div>
+  );
+
+  if (registered) return (
+    <>
+      {/* ── MOBILE success ── */}
+      <div className="admin-mobile" style={{ minHeight: '100vh', background: '#1a3a2a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+        <div style={{ background: '#fff', borderRadius: 28, padding: '2.5rem 2rem', width: '100%', maxWidth: 360, textAlign: 'center' }}>
+          <div style={{ width: 72, height: 72, background: '#d1fae5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
+            <Check size={36} color="#1a3a2a" strokeWidth={2.5} />
+          </div>
+          <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: '#1a3a2a', marginBottom: '0.6rem' }}>Emel Pengesahan Dihantar</h2>
+          <p style={{ fontSize: 14, color: '#5a7a68', lineHeight: 1.65, fontFamily: 'DM Sans, sans-serif', marginBottom: '1.75rem' }}>
+            Kami telah menghantar emel pengesahan ke <strong style={{ color: '#1a3a2a' }}>{email}</strong>. Sila semak peti masuk anda dan klik pautan untuk mengesahkan akaun.
+          </p>
+          <Link href="/admin/login" style={{ display: 'block', background: '#1a3a2a', color: '#b7e4c7', borderRadius: 14, padding: '13px', fontSize: 14, fontWeight: 600, fontFamily: 'DM Sans, sans-serif', textDecoration: 'none' }}>
+            Pergi ke Log Masuk
+          </Link>
+        </div>
+      </div>
+
+      {/* ── DESKTOP success ── */}
+      <div className="admin-desktop" style={{ minHeight: '100vh', background: '#1a3a2a', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', fontFamily: 'DM Sans, sans-serif' }}>
+        <div style={{ background: '#fff', borderRadius: 16, padding: 'clamp(24px, 5vw, 40px) clamp(20px, 5vw, 36px)', width: '100%', maxWidth: 400, boxShadow: '0 8px 40px rgba(0,0,0,0.18)', textAlign: 'center' }}>
+          <div style={{ width: 72, height: 72, background: '#d1fae5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
+            <Check size={36} color="#1a3a2a" strokeWidth={2.5} />
+          </div>
+          <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: '#1a3a2a', marginBottom: '0.6rem' }}>Emel Pengesahan Dihantar</h2>
+          <p style={{ fontSize: 14, color: '#5a7a68', lineHeight: 1.65, marginBottom: '1.75rem' }}>
+            Kami telah menghantar emel pengesahan ke <strong style={{ color: '#1a3a2a' }}>{email}</strong>. Sila semak peti masuk anda dan klik pautan untuk mengesahkan akaun.
+          </p>
+          <a href="/admin/login" style={{ display: 'block', background: '#1a3a2a', color: '#74c69d', borderRadius: '3rem', padding: '12px', fontSize: 15, fontWeight: 600, textDecoration: 'none' }}>
+            Pergi ke Log Masuk
+          </a>
+        </div>
+      </div>
+    </>
   );
 
   return (

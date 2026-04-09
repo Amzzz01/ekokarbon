@@ -1,25 +1,7 @@
-Add agriculture step to the existing carbon footprint calculator WITHOUT changing any existing design, layout, or styles.
+claude "Make these 3 changes for email verification:
 
-=== ONLY ADD, DO NOT MODIFY EXISTING CODE ===
+1. lib/adminAuth.js — import sendEmailVerification from 'firebase/auth'. In the register function, after updateProfile, call await sendEmailVerification(credential.user) before returning the user.
 
-1. In `lib/carbonFactors.js`:
-   - ADD agriculture object inside FACTORS (do not touch existing factors):
-     agriculture: {
-       livestock: { cattle: 2500, goat: 165, poultry: 7 },
-       fertiliser: 5.7
-     }
-   - ADD agriculture tips inside getTips() for when agriculture is the highest emission source:
-     'Kurangkan bilangan ternakan atau guna sistem pengurusan najis yang lebih baik'
-     'Guna baja organik sebagai ganti baja nitrogen sintetik'
-     'Amalkan pertanian karbon rendah seperti penanaman semula hutan'
+2. app/admin/register/page.jsx — add a registered state (useState false). In handleSubmit, after successful register(), instead of router.push('/admin/dashboard'), set registered to true. When registered is true, render a success screen (both mobile and desktop versions) showing a green checkmark icon, title 'Emel Pengesahan Dihantar', message telling user to check their inbox at the registered email address, and a link back to /admin/login.
 
-2. In `app/calculator/page.jsx`:
-   - ADD 'Pertanian' into STEPS array between 'Penerbangan' and 'Makanan & Gaya Hidup', do not rename or remove existing steps
-   - ADD to form state only these 4 new fields: cattle: 0, goat: 0, poultry: 0, fertiliser_kg: 0
-   - ADD agriculture calculation inside calculate() function, do not touch existing elec/transport/flights/diet/shopping lines:
-     const agriculture = (form.cattle * FACTORS.agriculture.livestock.cattle) + (form.goat * FACTORS.agriculture.livestock.goat) + (form.poultry * FACTORS.agriculture.livestock.poultry) + (form.fertiliser_kg * FACTORS.agriculture.fertiliser)
-   - ADD agriculture to the return object of calculate()
-   - ADD new step JSX block for 'Pertanian' using EXACTLY the same cardStyle, inputStyle, labelStyle, and Field component already used in other steps — copy the same pattern
-   - ADD to chartData array: { name: 'Pertanian', value: +(breakdown.agriculture / 1000).toFixed(2), fill: '#a3b18a' }
-   - UPDATE step condition numbers only where needed to account for the new step inserted (shift existing step === 3 to step === 4, step === 4 to step === 5)
-   - DO NOT change any existing styles, components, or JSX outside of what is listed above
+3. app/admin/login/page.jsx — after successful login in handleSubmit, check if user.emailVerified is false. If not verified, call signOut(auth) and setError with 'Sila sahkan emel anda dahulu. Semak peti masuk anda.' then return early. Import signOut from firebase/auth and auth from @/lib/firebase."
