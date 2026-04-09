@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid, Legend, PieChart, Pie } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid/*, Legend, PieChart, Pie*/ } from 'recharts';
 import { getInfografik } from '@/lib/adminData';
 
 function InfografikCarousel({ items }) {
@@ -174,19 +174,20 @@ const tempData = [
   { year: '2024', temp: 1.3 },
 ];
 
-const myBreakdown = [
-  { name: 'Tenaga & Industri', value: 72, color: '#ef4444' },
-  { name: 'Pengangkutan', value: 15, color: '#f97316' },
-  { name: 'Pertanian', value: 8, color: '#74c69d' },
-  { name: 'Sisa', value: 5, color: '#60a5fa' },
-];
 
-const gasBreakdown = [
-  { name: 'CO₂', value: 76, color: '#1a3a2a' },
-  { name: 'Metana (CH₄)', value: 16, color: '#2d6a4f' },
-  { name: 'N₂O', value: 6, color: '#74c69d' },
-  { name: 'Lain-lain', value: 2, color: '#b7e4c7' },
-];
+// const myBreakdown = [
+//   { name: 'Tenaga & Industri', value: 72, color: '#ef4444' },
+//   { name: 'Pengangkutan', value: 15, color: '#f97316' },
+//   { name: 'Pertanian', value: 8, color: '#74c69d' },
+//   { name: 'Sisa', value: 5, color: '#60a5fa' },
+// ];
+
+// const gasBreakdown = [
+//   { name: 'CO₂', value: 76, color: '#1a3a2a' },
+//   { name: 'Metana (CH₄)', value: 16, color: '#2d6a4f' },
+//   { name: 'N₂O', value: 6, color: '#74c69d' },
+//   { name: 'Lain-lain', value: 2, color: '#b7e4c7' },
+// ];
 
 const impacts = [
   { icon: '🌡️', title: 'Suhu Naik +1.3°C', desc: 'Sejak era pra-industri. Dijangka capai +1.5°C sebelum 2030.' },
@@ -263,7 +264,7 @@ export default function InfografikPage() {
         </div>
 
         {/* Section 3: Malaysia breakdown + Gas breakdown side by side */}
-        <div className="pie-grid" style={{ marginBottom: '2rem' }}>
+        {/* <div className="pie-grid" style={{ marginBottom: '2rem' }}>
           <div style={{ background: 'white', borderRadius: 24, padding: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', border: '1px solid rgba(116,198,157,0.15)' }}>
             <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#1a3a2a', fontSize: '1rem', marginBottom: '0.5rem' }}>🇲🇾 Sumber Emisi Malaysia</h2>
             <p style={{ fontSize: '0.8rem', color: '#5a7a68', marginBottom: '1rem' }}>% daripada jumlah emisi negara</p>
@@ -305,7 +306,7 @@ export default function InfografikPage() {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Section 4: Impacts */}
         <div style={{ marginBottom: '2rem' }}>

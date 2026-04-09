@@ -37,13 +37,13 @@ const practices = [
   },
 ];
 
-const timeline = [
-  { year: '2015', event: 'Malaysia komited kepada Perjanjian Paris, sasarkan kurang 45% intensiti karbon menjelang 2030' },
-  { year: '2019', event: 'Program Ladang Organik Negara diperluaskan kepada 30,000 hektar' },
-  { year: '2021', event: 'Inisiatif Net Zero Carbon Cities dilancarkan di Putrajaya dan Iskandar Malaysia' },
-  { year: '2023', event: 'Malaysia sasarkan 40% tenaga boleh diperbaharui dalam campuran elektrik menjelang 2035' },
-  { year: '2025', event: 'Program carbon credit untuk petani Malaysia mula diperkenalkan' },
-];
+// const timeline = [
+//   { year: '2015', event: 'Malaysia komited kepada Perjanjian Paris, sasarkan kurang 45% intensiti karbon menjelang 2030' },
+//   { year: '2019', event: 'Program Ladang Organik Negara diperluaskan kepada 30,000 hektar' },
+//   { year: '2021', event: 'Inisiatif Net Zero Carbon Cities dilancarkan di Putrajaya dan Iskandar Malaysia' },
+//   { year: '2023', event: 'Malaysia sasarkan 40% tenaga boleh diperbaharui dalam campuran elektrik menjelang 2035' },
+//   { year: '2025', event: 'Program carbon credit untuk petani Malaysia mula diperkenalkan' },
+// ];
 
 export default function AgriculturePage() {
   return (
@@ -104,7 +104,7 @@ export default function AgriculturePage() {
       </div>
 
       {/* Timeline */}
-      <div style={{ background: '#f0faf4', padding: '4rem 2rem' }}>
+      {/* <div style={{ background: '#f0faf4', padding: '4rem 2rem' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
           <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1.8rem', color: '#1a3a2a', letterSpacing: '-1px', marginBottom: '2rem' }}>Perjalanan Malaysia Menuju Pertanian Lestari</h2>
           {timeline.map((t, i) => (
@@ -119,7 +119,7 @@ export default function AgriculturePage() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

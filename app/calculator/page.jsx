@@ -4,7 +4,7 @@ import { FACTORS, getRating, getTips, MY_AVERAGE, WORLD_TARGET } from '@/lib/car
 import { saveCalcResult, getCalcHistory } from '@/lib/storage';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 
-const STEPS = ['Rumah', 'Pengangkutan', 'Penerbangan', 'Makanan & Gaya Hidup', 'Keputusan'];
+const STEPS = ['Rumah', 'Pengangkutan', 'Penerbangan', 'Pertanian', 'Makanan & Gaya Hidup', 'Keputusan'];
 
 const inputStyle = {
   width: '100%', padding: '0.75rem 1rem',
@@ -12,9 +12,10 @@ const inputStyle = {
   borderRadius: 12, fontSize: '0.95rem',
   background: 'white', color: '#1b2e22',
   outline: 'none', fontFamily: 'DM Sans, sans-serif',
+  boxSizing: 'border-box',
 };
 
-const selectStyle = { ...inputStyle, cursor: 'pointer' };
+const selectStyle = { ...inputStyle, cursor: 'pointer', boxSizing: 'border-box' };
 
 const labelStyle = {
   display: 'block', fontSize: '0.85rem',
@@ -52,6 +53,11 @@ export default function CalculatorPage() {
     // Diet & lifestyle
     diet: 'mixed',
     shopping: 'medium',
+    // Agriculture
+    cattle: 0,
+    goat: 0,
+    poultry: 0,
+    fertiliser_kg: 0,
   });
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -68,8 +74,9 @@ export default function CalculatorPage() {
       (form.flight_long * 2 * 7000 * FACTORS.flight.long);
     const diet = FACTORS.diet[form.diet] * 365;
     const shopping = FACTORS.shopping[form.shopping] * 12;
+    const agriculture = (form.cattle * FACTORS.agriculture.livestock.cattle) + (form.goat * FACTORS.agriculture.livestock.goat) + (form.poultry * FACTORS.agriculture.livestock.poultry) + (form.fertiliser_kg * FACTORS.agriculture.fertiliser);
 
-    return { electricity: elec, transport, flights, diet, shopping };
+    return { electricity: elec, transport, flights, agriculture, diet, shopping };
   }
 
   const breakdown = calculate();
@@ -82,6 +89,7 @@ export default function CalculatorPage() {
     { name: 'Elektrik', value: +(breakdown.electricity / 1000).toFixed(2), fill: '#74c69d' },
     { name: 'Pengangkutan', value: +(breakdown.transport / 1000).toFixed(2), fill: '#2d6a4f' },
     { name: 'Penerbangan', value: +(breakdown.flights / 1000).toFixed(2), fill: '#1a3a2a' },
+    { name: 'Pertanian', value: +(breakdown.agriculture / 1000).toFixed(2), fill: '#a3b18a' },
     { name: 'Makanan', value: +(breakdown.diet / 1000).toFixed(2), fill: '#d4a373' },
     { name: 'Beli-belah', value: +(breakdown.shopping / 1000).toFixed(2), fill: '#b7e4c7' },
   ];
@@ -167,7 +175,7 @@ const btnPrimary = {
             </Field>
 
             {/* Live mini preview */}
-            <div style={{ background: 'rgba(116,198,157,0.1)', borderRadius: 12, padding: '1rem', marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="preview-strip" style={{ background: 'rgba(116,198,157,0.1)', borderRadius: 12, padding: '1rem', marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '0.85rem', color: '#5a7a68' }}>Anggaran dari elektrik:</span>
               <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#2d6a4f' }}>
                 {((form.electricity_kwh * FACTORS.electricity * 12) / form.occupants / 1000).toFixed(2)} tan CO₂/tahun
@@ -220,7 +228,7 @@ const btnPrimary = {
               </Field>
             )}
 
-            <div style={{ background: 'rgba(116,198,157,0.1)', borderRadius: 12, padding: '1rem', marginTop: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+            <div className="preview-strip" style={{ background: 'rgba(116,198,157,0.1)', borderRadius: 12, padding: '1rem', marginTop: '1rem', display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ fontSize: '0.85rem', color: '#5a7a68' }}>Anggaran dari pengangkutan:</span>
               <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#2d6a4f' }}>
                 {(breakdown.transport / 1000).toFixed(2)} tan CO₂/tahun
@@ -247,7 +255,7 @@ const btnPrimary = {
               </Field>
             ))}
 
-            <div style={{ background: 'rgba(116,198,157,0.1)', borderRadius: 12, padding: '1rem', marginTop: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+            <div className="preview-strip" style={{ background: 'rgba(116,198,157,0.1)', borderRadius: 12, padding: '1rem', marginTop: '1rem', display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ fontSize: '0.85rem', color: '#5a7a68' }}>Anggaran dari penerbangan:</span>
               <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#2d6a4f' }}>
                 {(breakdown.flights / 1000).toFixed(2)} tan CO₂/tahun
@@ -256,8 +264,42 @@ const btnPrimary = {
           </div>
         )}
 
-        {/* STEP 3 — Diet & Lifestyle */}
+        {/* STEP 3 — Pertanian */}
         {step === 3 && (
+          <div className="calc-card">
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.3rem', fontWeight: 700, color: '#1a3a2a', marginBottom: '1.5rem' }}>🌾 Pertanian</h2>
+
+            <Field label="Bilangan lembu yang diternak" hint="Masukkan 0 jika tiada">
+              <input type="number" style={inputStyle} value={form.cattle} min={0}
+                onChange={e => set('cattle', +e.target.value)} />
+            </Field>
+
+            <Field label="Bilangan kambing yang diternak" hint="Masukkan 0 jika tiada">
+              <input type="number" style={inputStyle} value={form.goat} min={0}
+                onChange={e => set('goat', +e.target.value)} />
+            </Field>
+
+            <Field label="Bilangan ayam/itik yang diternak" hint="Masukkan 0 jika tiada">
+              <input type="number" style={inputStyle} value={form.poultry} min={0}
+                onChange={e => set('poultry', +e.target.value)} />
+            </Field>
+
+            <Field label="Penggunaan baja nitrogen setahun (kg)" hint="Masukkan 0 jika tidak menggunakan baja">
+              <input type="number" style={inputStyle} value={form.fertiliser_kg} min={0}
+                onChange={e => set('fertiliser_kg', +e.target.value)} />
+            </Field>
+
+            <div className="preview-strip" style={{ background: 'rgba(116,198,157,0.1)', borderRadius: 12, padding: '1rem', marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.85rem', color: '#5a7a68' }}>Anggaran dari pertanian:</span>
+              <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#2d6a4f' }}>
+                {(breakdown.agriculture / 1000).toFixed(2)} tan CO₂/tahun
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4 — Diet & Lifestyle */}
+        {step === 4 && (
           <div className="calc-card">
             <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.3rem', fontWeight: 700, color: '#1a3a2a', marginBottom: '1.5rem' }}>🍽️ Makanan &amp; Gaya Hidup</h2>
 
@@ -307,8 +349,8 @@ const btnPrimary = {
           </div>
         )}
 
-        {/* STEP 4 — Results */}
-        {step === 4 && (
+        {/* STEP 5 — Results */}
+        {step === 5 && (
           <div>
             {/* Main result card */}
             <div className="calc-result-card">
@@ -390,13 +432,13 @@ const btnPrimary = {
         )}
 
         {/* Navigation buttons */}
-        {step < 4 && (
+        {step < 5 && (
           <div className="calc-nav">
             <button onClick={() => setStep(s => Math.max(0, s - 1))} style={{ ...btnSecondary, visibility: step === 0 ? 'hidden' : 'visible' }}>
               ← Sebelum
             </button>
             <button onClick={() => setStep(s => s + 1)} style={btnPrimary}>
-              {step === 3 ? '🧮 Lihat Keputusan' : 'Seterusnya →'}
+              {step === 4 ? '🧮 Lihat Keputusan' : 'Seterusnya →'}
             </button>
           </div>
         )}
