@@ -35,6 +35,9 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [verifiedSuccess, setVerifiedSuccess] = useState(false);
+  const [unverifiedUser, setUnverifiedUser] = useState(null); // { uid, email, name }
+  const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -52,6 +55,7 @@ export default function AdminLoginPage() {
       const user = await login(email, password);
       const verified = await checkEmailVerified(user.uid);
       if (!verified) {
+        setUnverifiedUser({ uid: user.uid, email: user.email, name: user.displayName });
         await signOut(auth);
         setError('Sila sahkan emel anda dahulu. Semak peti masuk anda.');
         return;
@@ -64,6 +68,25 @@ export default function AdminLoginPage() {
     }
   }
 
+  async function handleResend() {
+    if (!unverifiedUser || resending) return;
+    setResending(true);
+    setResendSuccess(false);
+    try {
+      const res = await fetch('/api/send-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(unverifiedUser),
+      });
+      if (res.ok) setResendSuccess(true);
+      else setError('Gagal menghantar semula. Sila cuba lagi.');
+    } catch {
+      setError('Gagal menghantar semula. Sila cuba lagi.');
+    } finally {
+      setResending(false);
+    }
+  }
+
   const errorBox = error && (
     <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>
       {error}
@@ -73,6 +96,30 @@ export default function AdminLoginPage() {
   const successBox = verifiedSuccess && (
     <div style={{ background: '#f0fdf4', border: '1px solid #86efac', color: '#166534', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>
       Emel berjaya disahkan! Sila log masuk.
+    </div>
+  );
+
+  const resendBox = unverifiedUser && (
+    <div style={{ marginBottom: 16 }}>
+      {resendSuccess ? (
+        <div style={{ background: '#f0fdf4', border: '1px solid #86efac', color: '#166534', borderRadius: 8, padding: '10px 14px', fontSize: 13 }}>
+          Emel pengesahan baharu telah dihantar ke <strong>{unverifiedUser.email}</strong>.
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resending}
+          style={{
+            width: '100%', background: 'transparent', border: '1.5px solid #1a3a2a',
+            borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 600,
+            color: '#1a3a2a', fontFamily: 'DM Sans, sans-serif',
+            cursor: resending ? 'not-allowed' : 'pointer', opacity: resending ? 0.6 : 1,
+          }}
+        >
+          {resending ? 'Menghantar...' : 'Hantar Semula Emel Pengesahan'}
+        </button>
+      )}
     </div>
   );
 
@@ -104,6 +151,7 @@ export default function AdminLoginPage() {
           <p style={{ fontFamily: 'DM Sans, sans-serif', color: '#5a7a68', fontSize: 14, marginBottom: 20, textAlign: 'center' }}>Log masuk untuk meneruskan</p>
           {successBox}
           {errorBox}
+          {resendBox}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
               <span style={mobileLabel}>Email</span>
@@ -148,6 +196,7 @@ export default function AdminLoginPage() {
           <p style={{ color: '#5a7a68', fontSize: 14, marginBottom: 28 }}>Log masuk untuk meneruskan</p>
           {successBox}
           {errorBox}
+          {resendBox}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#1a3a2a', marginBottom: 6 }}>Email</label>
