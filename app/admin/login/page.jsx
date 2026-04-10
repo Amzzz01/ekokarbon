@@ -1,9 +1,9 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff, Leaf } from 'lucide-react';
-import { login } from '@/lib/adminAuth';
+import { login, checkEmailVerified } from '@/lib/adminAuth';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
@@ -34,6 +34,15 @@ export default function AdminLoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verifiedSuccess, setVerifiedSuccess] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const v = params.get('verified');
+    if (v === '1') setVerifiedSuccess(true);
+    if (v === 'error') setError('Pautan pengesahan tidak sah.');
+    if (v === 'expired') setError('Pautan pengesahan telah tamat tempoh. Daftar semula.');
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,7 +50,8 @@ export default function AdminLoginPage() {
     setLoading(true);
     try {
       const user = await login(email, password);
-      if (!user.emailVerified) {
+      const verified = await checkEmailVerified(user.uid);
+      if (!verified) {
         await signOut(auth);
         setError('Sila sahkan emel anda dahulu. Semak peti masuk anda.');
         return;
@@ -57,6 +67,12 @@ export default function AdminLoginPage() {
   const errorBox = error && (
     <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>
       {error}
+    </div>
+  );
+
+  const successBox = verifiedSuccess && (
+    <div style={{ background: '#f0fdf4', border: '1px solid #86efac', color: '#166534', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>
+      Emel berjaya disahkan! Sila log masuk.
     </div>
   );
 
@@ -86,6 +102,7 @@ export default function AdminLoginPage() {
         {/* White bottom sheet */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#fff', borderRadius: '32px 32px 0 0', padding: '28px 24px 40px' }}>
           <p style={{ fontFamily: 'DM Sans, sans-serif', color: '#5a7a68', fontSize: 14, marginBottom: 20, textAlign: 'center' }}>Log masuk untuk meneruskan</p>
+          {successBox}
           {errorBox}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
@@ -129,6 +146,7 @@ export default function AdminLoginPage() {
             </a>
           </div>
           <p style={{ color: '#5a7a68', fontSize: 14, marginBottom: 28 }}>Log masuk untuk meneruskan</p>
+          {successBox}
           {errorBox}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
