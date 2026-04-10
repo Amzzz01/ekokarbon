@@ -5,7 +5,8 @@ import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get('token');
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
   if (!token) {
     return NextResponse.redirect(`${baseUrl}/admin/login?verified=error`);
