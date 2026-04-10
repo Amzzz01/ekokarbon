@@ -1,11 +1,9 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff, Leaf } from 'lucide-react';
-import { login, checkEmailVerified } from '@/lib/adminAuth';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { login } from '@/lib/adminAuth';
 
 const mobileInputWrap = {
   display: 'flex', alignItems: 'center', gap: 10,
@@ -34,32 +32,13 @@ export default function AdminLoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [verifiedSuccess, setVerifiedSuccess] = useState(false);
-  const [unverifiedUser, setUnverifiedUser] = useState(null); // { uid, email, name }
-  const [resending, setResending] = useState(false);
-  const [resendSuccess, setResendSuccess] = useState(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const v = params.get('verified');
-    if (v === '1') setVerifiedSuccess(true);
-    if (v === 'error') setError('Pautan pengesahan tidak sah.');
-    if (v === 'expired') setError('Pautan pengesahan telah tamat tempoh. Daftar semula.');
-  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      const user = await login(email, password);
-      const verified = await checkEmailVerified(user.uid);
-      if (!verified) {
-        setUnverifiedUser({ uid: user.uid, email: user.email, name: user.displayName });
-        await signOut(auth);
-        setError('Sila sahkan emel anda dahulu. Semak peti masuk anda.');
-        return;
-      }
+      await login(email, password);
       router.push('/admin/dashboard');
     } catch {
       setError('Email atau kata laluan tidak sah.');
@@ -68,58 +47,9 @@ export default function AdminLoginPage() {
     }
   }
 
-  async function handleResend() {
-    if (!unverifiedUser || resending) return;
-    setResending(true);
-    setResendSuccess(false);
-    try {
-      const res = await fetch('/api/send-verification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(unverifiedUser),
-      });
-      if (res.ok) setResendSuccess(true);
-      else setError('Gagal menghantar semula. Sila cuba lagi.');
-    } catch {
-      setError('Gagal menghantar semula. Sila cuba lagi.');
-    } finally {
-      setResending(false);
-    }
-  }
-
   const errorBox = error && (
     <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>
       {error}
-    </div>
-  );
-
-  const successBox = verifiedSuccess && (
-    <div style={{ background: '#f0fdf4', border: '1px solid #86efac', color: '#166534', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>
-      Emel berjaya disahkan! Sila log masuk.
-    </div>
-  );
-
-  const resendBox = unverifiedUser && (
-    <div style={{ marginBottom: 16 }}>
-      {resendSuccess ? (
-        <div style={{ background: '#f0fdf4', border: '1px solid #86efac', color: '#166534', borderRadius: 8, padding: '10px 14px', fontSize: 13 }}>
-          Emel pengesahan baharu telah dihantar ke <strong>{unverifiedUser.email}</strong>.
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={handleResend}
-          disabled={resending}
-          style={{
-            width: '100%', background: 'transparent', border: '1.5px solid #1a3a2a',
-            borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 600,
-            color: '#1a3a2a', fontFamily: 'DM Sans, sans-serif',
-            cursor: resending ? 'not-allowed' : 'pointer', opacity: resending ? 0.6 : 1,
-          }}
-        >
-          {resending ? 'Menghantar...' : 'Hantar Semula Emel Pengesahan'}
-        </button>
-      )}
     </div>
   );
 
@@ -149,9 +79,7 @@ export default function AdminLoginPage() {
         {/* White bottom sheet */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#fff', borderRadius: '32px 32px 0 0', padding: '28px 24px 40px' }}>
           <p style={{ fontFamily: 'DM Sans, sans-serif', color: '#5a7a68', fontSize: 14, marginBottom: 20, textAlign: 'center' }}>Log masuk untuk meneruskan</p>
-          {successBox}
           {errorBox}
-          {resendBox}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
               <span style={mobileLabel}>Email</span>
@@ -194,9 +122,7 @@ export default function AdminLoginPage() {
             </a>
           </div>
           <p style={{ color: '#5a7a68', fontSize: 14, marginBottom: 28 }}>Log masuk untuk meneruskan</p>
-          {successBox}
           {errorBox}
-          {resendBox}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#1a3a2a', marginBottom: 6 }}>Email</label>
